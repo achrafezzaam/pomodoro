@@ -22,4 +22,9 @@ public class TodoService {
     public Todo saveTodo(Todo newTodo) {
         return todoRepository.save(newTodo);
     }
+
+    public String deleteTodo(Todo todo) {
+        todoRepository.delete(todo);
+        return "Todo item was successfully deleted";
+    }
 }

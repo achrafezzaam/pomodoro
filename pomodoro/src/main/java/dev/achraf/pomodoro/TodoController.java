@@ -15,6 +15,7 @@ import java.util.Optional;
 public class TodoController {
     @Autowired
     private TodoService todoService;
+
     @GetMapping
     public ResponseEntity<List<Todo>> getAllTodos() {
         return new ResponseEntity<List<Todo>>(todoService.allTodos(), HttpStatus.OK);
@@ -29,5 +30,22 @@ public class TodoController {
     public ResponseEntity<Todo> addTodo(@RequestBody Todo newTodo) {
         Todo todo = todoService.saveTodo(newTodo);
         return new ResponseEntity<Todo>(todo, HttpStatus.OK);
+    }
+
+    @PutMapping("/{imdbId}")
+    public ResponseEntity<Todo> updateTodo(@PathVariable String imdbId, @RequestBody Todo newInfo) {
+        Todo todo = todoService.todoByImdbId(imdbId)
+                .orElseThrow(() -> new IllegalArgumentException("This Todo doesn't exist"));
+        todo.setTitle(newInfo.getTitle());
+        todo.setBody(newInfo.getBody());
+        todoService.saveTodo(todo);
+        return new ResponseEntity<Todo>(todo, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{imdbId}")
+    public  ResponseEntity<String> deleteTodo(@PathVariable String imdbId) {
+        Todo todo = todoService.todoByImdbId(imdbId)
+                .orElseThrow(() -> new IllegalArgumentException("This Todo doesn't exist"));
+        return new ResponseEntity<String>(todoService.deleteTodo(todo), HttpStatus.OK);
     }
 }
